@@ -290,3 +290,65 @@ if __name__ == '__main__':
     cv2.destroyAllWindows()
 ```
 
+
+
+# 画图
+
+```python
+import cv2
+import numpy as np
+from PIL import ImageFont,ImageDraw,Image # 解决画中文的包
+
+
+if __name__ == '__main__':
+
+    cv2.namedWindow('video',cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('video',1280,768)
+    cap = cv2.VideoCapture(0)
+
+    while cap.isOpened():
+
+
+        ret,frame = cap.read()
+
+        # 画直线，参数为：图像，起始点，结束点，颜色，线宽，线型（0，4,8,16），坐标缩放比例（一般不写）
+        cv2.line(frame,(10,50),(500,50),(0,0,255),12,8)
+        # 画矩形，参数与画直线一样
+        cv2.rectangle(frame, (400, 100), (600, 300), (0, 0, 255), 1, 8)
+        # 画圆，参数为：图像，中心点，半径，其余与画直线一样
+        cv2.circle(frame,(200,200),100,(0,0,255),1,8)
+
+        # 画椭圆，参数为：图像，中心点，长轴、短轴长度的一半，倾斜角，开始角度，结束角度，其余与画直线一样
+        cv2.ellipse(frame,(400,300),(40,20),45,0,180,(0,0,255),5,16)
+
+        # 画多边形，参数为：图像，顶点集，是否闭合，其余与画直线一样
+        pts = np.array([(90,90),(400,200),(50,50),(100,100)],np.int32)
+        cv2.polylines(frame,[pts],True,(0,0,255),1,8)
+
+        # 画填充多边形
+        pts = np.array([(300, 70), (60, 100), (200, 300)], np.int32)
+        cv2.fillPoly(frame,[pts],(0,0,255),8)
+
+        # 画文字，参数为：图像，文本，坐标，字体，字体大小，颜色
+        cv2.putText(frame,"opencv",(100,300),cv2.FONT_HERSHEY_SIMPLEX,2,(0,0,255)) # 这种方式中文会乱码
+
+        # 画中文
+        font = ImageFont.truetype('msyhbd.ttc',12) # msyhbd.ttc 为字体文件，可以在 C:\Windows\Fonts 找到
+        frame = Image.fromarray(frame)
+        draw = ImageDraw.Draw(frame)
+        draw.text((200,400),'小杉杉',font = font,fill = (0,0,255,0))
+        frame = np.array(frame)
+
+        cv2.imshow('video',frame)
+
+
+        key = cv2.waitKey(1000 // 48)
+
+
+        if key & 0xFF == ord('q') or cv2.getWindowProperty('video', cv2.WND_PROP_VISIBLE) < 1.0:
+            break
+
+    cv2.destroyAllWindows()
+
+```
+
