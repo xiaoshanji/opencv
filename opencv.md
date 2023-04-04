@@ -352,3 +352,100 @@ if __name__ == '__main__':
 
 ```
 
+
+
+
+
+# 图像运算
+
+## 加减乘除
+
+```python
+import cv2
+
+if __name__ == '__main__':
+
+    img1 = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+    img2 = cv2.imread('E:\pic\youname\\20191105164537.png')
+
+    # print(img1.shape)
+    # print(img2.shape)
+    # 图片加法，要求两个图片的长、宽、维度是一样的。如果图片大小不一致可以采用切片的方式对大的图片进行裁剪
+    # 将两个图片对应位置的元素相加，如果超过 255 ，则变成 255
+    img = cv2.add(img1,img2)
+
+    # 这种加法，是将图片的每个元素加上 100 然后 % 256
+    #img1 += 100
+
+    # 图片减法，对应位置的元素相减，如果小于 0，则变成 0
+    # img = cv2.subtract(img1,img2)
+
+    # 图片乘法，对应位置的元素相乘，如果大于 255，则变成 255
+    # img = cv2.multiply(img1,img2)
+
+    # 图片除法，对应位置的元素相除，如果小于 0，则变成 0
+    # img = cv2.divide(img1,img2)
+
+    cv2.imshow('video',img)
+
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+
+
+## 融合
+
+```python
+import cv2
+
+if __name__ == '__main__':
+
+    img1 = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+    img2 = cv2.imread('E:\pic\youname\\20191105164537.png')
+
+    # print(img1.shape)
+    # print(img2.shape)
+    # 图像的融合，参数为：第一个图像，第一个图像所占比重，第二个元素，第二个元素所占比重，偏差
+    # 相当于对图像的每个位置上的元素做线性运算：x * weight1 + y * weight2 + b
+    img = cv2.addWeighted(img1,0.2,img2,0.8,0)
+
+    cv2.imshow('video',img)
+
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+
+
+位运算
+
+```python
+import cv2
+
+if __name__ == '__main__':
+
+    img1 = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+    img2 = cv2.imread('E:\pic\youname\\20191105164537.png')
+
+    # print(img1.shape)
+    # print(img2.shape)
+
+    # 非操作，相当于 255 - 每个位置上的元素
+    img = cv2.bitwise_not(img1)
+
+    # 与操作，两个图像对应位置上的元素进行与操作
+    img = cv2.bitwise_and(img1,img2)
+
+    # 或操作，两个图像对应位置上的元素进行或操作
+    img = cv2.bitwise_or(img1, img2)
+
+    # 异或操作，两个图像对应位置上的元素进行异或操作
+    img = cv2.bitwise_xor(img1, img2)
+
+    cv2.imshow('video',img)
+
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
