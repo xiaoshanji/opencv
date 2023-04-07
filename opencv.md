@@ -449,3 +449,161 @@ if __name__ == '__main__':
     cv2.destroyAllWindows()
 ```
 
+
+
+# 放大与缩小
+
+```python
+import cv2
+
+if __name__ == '__main__':
+
+    img1 = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+    # img2 = cv2.imread('E:\pic\youname\\20191105164537.png')
+
+    # print(img1.shape)
+    # print(img2.shape)
+	
+    # 参数为：操作图像，缩放之后的大小，缩放之后的输出图片，x 轴缩放比， y 轴的缩放比，插值算法（放大用）：cv2.INTER_NEAREST（效果差，速度快）、cv2.INTER_LINEAR、cv2.INTER_CUBIC、cv2.INTER_AREA（效果最好，计算时间长）
+    img = cv2.resize(img1,(1280,768))
+
+    cv2.imshow('video',img)
+
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+
+
+# 翻转与旋转
+
+```python
+import cv2
+
+if __name__ == '__main__':
+
+    img1 = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+
+    # print(img1.shape)
+
+    img = cv2.resize(img1,(1280,768))
+    
+    # 翻转，参数为：操作图像，翻转编码（> 0 : 左右翻转，= 0 ：上下翻转，< 0 : 上下左右翻转）
+    img = cv2.flip(img,0)
+    
+    # 旋转，参数为：操作图像，旋转编码（ROTATE_180 : 旋转 180，ROTATE_90_CLOCKWISE ：顺时针旋转 90，ROTATE_90_COUNTERCLOCKWISE : 逆时针旋转 90）
+	img = cv2.rotate(img,cv2.ROTATE_180)
+    
+    cv2.imshow('video',img)
+
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+
+
+# 仿射变换
+
+## 平移
+
+​		平移矩阵：
+
+![](image/QQ截图20230407200556.png)
+
+```python
+import cv2
+import numpy as np
+
+if __name__ == '__main__':
+
+    img1 = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+    # img2 = cv2.imread('E:\pic\youname\\20191105164537.png')
+
+    # print(img1.shape)
+    # print(img2.shape)
+
+
+	
+    img = cv2.resize(img1,(1280,768))
+    # 长，宽，通道数
+    h,w,ch = img.shape
+	# 平移矩阵
+    m = np.float32([[1,0,200],[0,1,0]])
+
+	# 仿射变换
+    img = cv2.warpAffine(img,m,(w,h)) 
+
+    cv2.imshow('video',img)
+
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+
+
+## 旋转任意角度
+
+```python
+import cv2
+import numpy as np
+
+if __name__ == '__main__':
+
+    img1 = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+
+    # print(img1.shape)
+
+    img = cv2.resize(img1,(1280,768))
+    h,w,ch = img.shape
+	
+    # 获取旋转矩阵，参数为：旋转的中心点，角度，缩放比
+    m = cv2.getRotationMatrix2D((w / 2,h / 2),45,1.0)
+
+    img = cv2.warpAffine(img,m,(w,h))
+
+    cv2.imshow('video',img)
+
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+
+
+## 获取变换矩阵
+
+```python
+import cv2
+import numpy as np
+
+if __name__ == '__main__':
+
+    img1 = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+
+    # print(img1.shape)
+
+    img = cv2.resize(img1,(1280,768))
+    h,w,ch = img.shape
+	
+    # 获取旋转变换矩阵，通过原图与结果图的三个对应的点的坐标，计算出变换矩阵
+    src = np.float32([[100,100],[200,200],[300,300]])
+    dst = np.float32([[200,200],[400,400],[500,400]])
+    m = cv2.getAffineTransform(src,dst)
+
+    # 透视变换，将图像中的部分进行清晰展示，即将歪的图片拉正
+    # 获取透视变换矩阵，通过原图与结果图的三个对应的点的坐标，计算出变换矩阵
+    # src = np.float32([[100,100],[200,200],[300,300],[490,70]])
+    # dst = np.float32([[200,200],[400,400],[500,400],[450,90]])
+    # m = cv2.getPerspectiveTransform()
+    
+    img = cv2.warpAffine(img,m,(w,h))
+
+
+
+    cv2.imshow('video',img)
+    
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+
+
