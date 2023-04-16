@@ -607,3 +607,74 @@ if __name__ == '__main__':
 
 
 
+# 卷积
+
+​		图像卷积就是卷积核在图像上按行滑动遍历像素时不断的相乘求和的过程。
+
+​		步长：卷积核每次移动的像素个数。
+
+​		`padding`：经过卷积之后，图片会变小，`padding`表示变回原始大小所要填充的圈数。
+
+​		计算：
+
+​				`w`：原始图片宽度，`h`：原始图片高度，`d`：原始图片通道数，`k`：卷积核数量，`f`：卷积核大小，`s`：步长，`p`：填充圈数
+
+​				结果：
+
+​						宽度` = (w - f + 2p) / s + 1`
+
+​						高度` = (h - f + 2p) / s + 1`
+
+​						通道数` = k`
+
+​						填充圈数`p = (f - 1) / 2`
+
+​		卷积核的大小通常为奇数，一是填充圈数计算结果为整数，二是方便定位卷积核的位置。
+
+```python
+import cv2
+import numpy as np
+
+if __name__ == '__main__':
+
+    img1 = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+
+    # print(img1.shape)
+
+
+
+    img = cv2.resize(img1,(1280,768))
+    h,w,ch = img.shape
+
+	# 卷积核
+    kernel = np.array([[-1,-1,-1],[-1,8,-1],[-1,-1,-1]])
+	# 卷积，参数为操作图像，卷积之后图像的类型（-1 表示与原图类型一致），卷积核，锚点（卷积核的中心点），偏差，边界类型
+    img = cv2.filter2D(img,-1,kernel)
+	
+    # 方盒滤波。卷积核为：a * 指定大小元素全是 1 的卷积核
+    # 参数为操作图像，卷积之后图像的类型（-1 表示与原图类型一致），卷积核大小，normalize
+    # 当 normalize = True , a = 1 / (w * h)，此时方盒滤波与均值滤波等价
+    # 当 normalize = False, a = 1
+	img = cv2.boxFilter(img , -1,(5,5),normalize=True)
+    
+    # 均值滤波
+    # 参数为：操作图像，卷积核大小
+    img = cv2.blur(img,(5,5))
+    
+    # 高斯滤波，其卷积核内的元素符合高斯分布
+    # 参数为：操作图像，卷积核大小，sigmaX（x 轴标准差），sigmaY（y 轴标准差，默认为 0 ，此时等于 sigmaX）
+    # 如果指定 sigmaX = 0，且 sigmaY = 0，则会从卷积核的宽度和高度中计算
+	img = cv2.GaussianBlur(img,(5,5),sigmaX=1)
+
+    cv2.imshow('video',img)
+
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+
+
+
+
+
+
