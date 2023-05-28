@@ -665,6 +665,14 @@ if __name__ == '__main__':
     # 参数为：操作图像，卷积核大小，sigmaX（x 轴标准差），sigmaY（y 轴标准差，默认为 0 ，此时等于 sigmaX）
     # 如果指定 sigmaX = 0，且 sigmaY = 0，则会从卷积核的宽度和高度中计算
 	img = cv2.GaussianBlur(img,(5,5),sigmaX=1)
+    
+    # 中值滤波，适用于椒盐噪声
+    # 参数为：操作图像，卷积核大小
+	img = cv2.medianBlur(img,5)
+    
+    # 双边滤波，去噪，保留边缘信息，有美颜效果
+    # 参数为：操作图像，卷积核大小，计算灰度距离的sigma，计算空间距离的sigma
+    img = cv2.bilateralFilter(img,7,20,50)
 
     cv2.imshow('video',img)
 
@@ -673,6 +681,57 @@ if __name__ == '__main__':
 ```
 
 
+
+
+
+# 算子
+
+​		检测边缘
+
+```python
+import cv2
+import numpy as np
+
+if __name__ == '__main__':
+
+    cv2.namedWindow('video', cv2.WINDOW_NORMAL)  # 创建一个窗口
+    cv2.resizeWindow('video', 800, 600)
+
+    img = cv2.imread('E:\pic\savanna\\20210409165937.jpg')
+
+    # print(img1.shape)
+
+    h,w,ch = img.shape
+
+    img = cv2.resize(img,(800,600))
+
+	# Soble 算子，寻找边界，原理是用相邻位置上的像素值的差来模拟一阶梯度（导数），当边缘两边的元素值变化不大，此算子不能正确寻找边缘
+    # 计算 x 方向的梯度,ksize：卷积核大小
+    img1 = cv2.Sobel(img,-1,dx = 1,dy = 0,ksize = 3)
+    # 计算 y 方向的梯度
+    img2 = cv2.Sobel(img, -1, dx = 0, dy = 1,ksize = 3)
+
+    # 合并两个方向上的梯度
+    dst = cv2.add(img1,img2)
+    
+    # 拉普拉斯算子，将二阶梯度等于 0 的地方作为边缘，对噪声敏感，使用前要先降噪
+    dst = cv2.Laplacian(img,-1,ksize = 3)
+    
+    # Canny 边缘检测中最优的算法
+    # 步骤：
+    #   1、降噪，一般选用高斯滤波去除噪声
+    #   2、计算梯度，利用 Soble 算子计算梯度和方向
+    #   3、遍历像素点，判断当前像素点是否是周围像素点中具有相同方向梯度的最大值，是则保留，否则置为 0
+    #   4、通过与设定的最大最下阈值进行比较，若梯度大于最大阈值，则保留，小于最小阈值则置为 0，介于两者之间则判断是否与边界相连，是则保留，否则置为 0,。这一步主要是为了排除误判的点
+    dst = cv2.Canny(img, 50, 120)
+
+    cv2.imshow('video',img)
+    cv2.imshow('video1', np.hstack((img1,img2)))
+    cv2.imshow('dst', dst)
+
+    key = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
 
 
 
